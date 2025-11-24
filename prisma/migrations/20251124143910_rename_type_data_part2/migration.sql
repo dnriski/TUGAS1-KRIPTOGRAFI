@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Message" ALTER COLUMN "title" SET DATA TYPE TEXT,
+ALTER COLUMN "description" SET DATA TYPE TEXT;

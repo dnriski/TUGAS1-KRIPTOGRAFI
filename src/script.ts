@@ -38,6 +38,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 });
 
+//CREATE DATA
 router.post("/new-note", async(req:Request, res: Response)=>{
     try {
         const { title, description } = req.body;
@@ -50,7 +51,7 @@ router.post("/new-note", async(req:Request, res: Response)=>{
     
     const titleEncrypted = await encryptDecrypt(title);
     const descEncrypted = await encryptDecrypt(description);
-    const newNote = await prisma.message.create({
+    await prisma.message.create({
         data: {
             title:titleEncrypted,
             description: descEncrypted,
@@ -58,12 +59,12 @@ router.post("/new-note", async(req:Request, res: Response)=>{
         },
     });
 
-    return res.status(201).json(
-        {
-            status: "Success",
-            message: newNote,
-        }
-    );
+    return res.send(`
+        <script>
+            alert("Catatan berhasil disimpan!");
+            window.location.href = "/";
+        </script>
+    `);
     } catch (err: any) {
         return res.status(500).json(
             {
@@ -74,22 +75,24 @@ router.post("/new-note", async(req:Request, res: Response)=>{
     }
 })
 
-router.get("/new-note", async(req: Request, res:Response)=>{
+//GET DATA
+router.get("/", async(req: Request, res:Response)=>{
     try {
         const data = await prisma.message.findMany()
-        const decryptedData = data.map(item => ({
+        const notes = data.map(item => ({
             ...item,
             title: encryptDecrypt(item.title),          // decrypt title
             description: encryptDecrypt(item.description) // decrypt description
         }));
-        return res.status(200).json(
-            {
-                status:"success",
-                message:{
-                    data :decryptedData
-                }
-            }
-        )
+        res.render("index", {notes:notes});
+        // return res.status(200).json(
+        //     {
+        //         status:"success",
+        //         message:{
+        //             data :decryptedData
+        //         }
+        //     }
+        // )
     } catch (error) {
         return res.status(500).json(
             {
@@ -100,24 +103,22 @@ router.get("/new-note", async(req: Request, res:Response)=>{
     }
 })
 
-router.put("/new-note/edit", async(req:Request, res:Response)=>{
-    const {title, description}=req.body
+//GET UPDATE
+router.get("/new-note/edit/:id", async(req:Request, res:Response)=>{
     try {
-    const updateNote = await prisma.message.update({
-        where:{
-            id:1
-        },
-        data:{
-            title:title, 
-            description: description,
-        }
+    const id = Number(req.params.id);
+    const note = await prisma.message.findUnique({
+        where:{id}
     })
-    return res.status(200).json(
-        {
-            status:"success",
-            message:updateNote
-        }
-    )     
+    if (!note) return res.send("Data tidak ditemukan");
+
+    const decryptedNote = {
+    ...note,
+    title: encryptDecrypt(note.title),
+    description: encryptDecrypt(note.description),
+    };
+
+    res.render("edit", { note: decryptedNote });    
     } catch (error) {
         return res.status(500).json(
             {
@@ -127,5 +128,63 @@ router.put("/new-note/edit", async(req:Request, res:Response)=>{
         )
     }
 })
+
+//UPDATE
+router.post("/new-note/edit/:id", async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const { title, description } = req.body;
+
+    await prisma.message.update({
+        where: { id },
+        data: {
+        title: encryptDecrypt(title),           // encrypt lagi
+        description: encryptDecrypt(description)
+        },
+    });
+
+    return res.send(`
+        <script>
+            alert("Berhasil mengupdate catatan!");
+            window.location.href = "/";
+        </script>
+    `);
+
+    } catch (error) {
+        return res.send(`
+            <script>
+            alert("Gagal update!");
+            window.history.back();
+        </script>
+    `);
+    }
+});
+
+//DELETE
+router.post("/new-note/delete/:id", async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+
+    await prisma.message.delete({
+        where: { id },
+    });
+
+    return res.send(`
+      <script>
+        alert("Catatan berhasil dihapus!");
+        window.location.href = "/";
+      </script>
+    `);
+
+  } catch (error) {
+    return res.send(`
+      <script>
+        alert("Gagal menghapus catatan!");
+        window.history.back();
+      </script>
+    `);
+  }
+});
+
 
 export default router;

@@ -1,0 +1,141 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f1f1f1;
+  margin: 0;
+  /* padding: 40px; */
+}
+
+.new-container {
+  display: flex;
+}
+
+.left {
+  height: 100vh;
+  width: 30%;
+  background: lightgray;
+}
+
+.right {
+  width: 70%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.margin {
+  margin: 5px;
+}
+
+.notepad-card {
+  width: 360px;
+  height: auto;
+  max-height: 400px;
+  background: #fffdf5;
+  border: 1px solid #e0d4aa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  position: relative;
+  padding-top: 20px;
+  margin: 2px;
+}
+
+/* Header garis tipis seperti notepad */
+.notepad-header {
+  height: 26px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #ffeab7,
+    #ffeab7 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  border-bottom: 1px solid #d4c18f;
+  border-radius: 6px 6px 0 0;
+}
+
+/* Konten */
+.notepad-content {
+  padding: 16px 20px;
+}
+
+.notepad-content h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.notepad-content p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Ring Notepad */
+.notepad-ring {
+  width: 14px;
+  height: 14px;
+  background: #d4c18f;
+  border-radius: 50%;
+  position: absolute;
+  top: -7px;
+}
+
+.ring-1 {
+  left: 50px;
+}
+.ring-2 {
+  left: 170px;
+}
+.ring-3 {
+  right: 50px;
+}
+
+.styling-text {
+  padding: 20px;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 320px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+input,
+textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  outline: none;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #d4c18f;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background: lightgray;
+}
