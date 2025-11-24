@@ -2,9 +2,11 @@ import { Router } from "express";
 import type { Request, Response } from "express";
 import { PrismaClient } from "../generated/prisma/client";
 import "dotenv/config";
+import { encryptDecrypt } from "./tools/encryptDecrypt";
 
 const router = Router();
 const prisma = new PrismaClient();
+
 
 // POST /users
 router.post("/", async (req: Request, res: Response) => {
@@ -45,11 +47,13 @@ router.post("/new-note", async(req:Request, res: Response)=>{
                 message: "Pastikan data sudah terisi",
             });
         }
-
+    
+    const titleEncrypted = await encryptDecrypt(title);
+    const descEncrypted = await encryptDecrypt(description);
     const newNote = await prisma.message.create({
         data: {
-            title,
-            description,
+            title:titleEncrypted,
+            description: descEncrypted,
             userId:1
         },
     });
@@ -73,10 +77,17 @@ router.post("/new-note", async(req:Request, res: Response)=>{
 router.get("/new-note", async(req: Request, res:Response)=>{
     try {
         const data = await prisma.message.findMany()
+        const decryptedData = data.map(item => ({
+            ...item,
+            title: encryptDecrypt(item.title),          // decrypt title
+            description: encryptDecrypt(item.description) // decrypt description
+        }));
         return res.status(200).json(
             {
                 status:"success",
-                message:data
+                message:{
+                    data :decryptedData
+                }
             }
         )
     } catch (error) {
