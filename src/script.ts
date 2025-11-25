@@ -8,36 +8,6 @@ const router = Router();
 const prisma = new PrismaClient();
 
 
-// POST /users
-router.post("/", async (req: Request, res: Response) => {
-    try {
-        const { name, email } = req.body;
-
-        if (!name || !email) {
-            return res.status(400).json({
-                message: "name dan email wajib diisi",
-            });
-        }
-
-    const newUser = await prisma.user.create({
-        data: {
-            name,
-            email,
-        },
-    });
-
-    res.status(201).json({
-        message: "User berhasil dibuat",
-        data: newUser,
-    });
-    } catch (err: any) {
-        res.status(500).json({
-            message: "Error",
-            error: err.message,
-        });
-    }
-});
-
 //CREATE DATA
 router.post("/new-note", async(req:Request, res: Response)=>{
     try {
@@ -54,8 +24,7 @@ router.post("/new-note", async(req:Request, res: Response)=>{
     await prisma.message.create({
         data: {
             title:titleEncrypted,
-            description: descEncrypted,
-            userId:1
+            description: descEncrypted
         },
     });
 
@@ -138,7 +107,7 @@ router.post("/new-note/edit/:id", async (req: Request, res: Response) => {
     await prisma.message.update({
         where: { id },
         data: {
-        title: encryptDecrypt(title),           // encrypt lagi
+        title: encryptDecrypt(title),       
         description: encryptDecrypt(description)
         },
     });
